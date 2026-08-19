@@ -1,0 +1,164 @@
+-- This is a further developed Turret FSM System, involving projectiles, collision detection, spacial querying and vector maths.
+
+-- SERVICES -- 
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local TurretManager = {}
+TurretManager.__index = TurretManager
+
+-- Scanning, Shooting, Stunned
+
+function TurretManager.new(model)
+	local self = setmetatable({}, TurretManager)
+	
+	self.Model = model
+	self.CurrentState = "Scanning"
+	self.Cooldown = 2 -- Rate of fire
+	self.Damage = 10 -- Damage per shot 
+	self.Range = 50
+	self.Speed = 100
+	self.TargetPlayer = nil 
+	
+	self.ScanningConnection = nil 
+	self.ShootingConnection = nil 
+
+	return self 
+end
+
+function TurretManager:SetState(state, forceChange)
+	if not forceChange then 
+		if self.CurrentState == state or self.CurrentState == "Stunned" then return end 
+	end
+	
+	self.CurrentState = state 
+	self:ExecuteAction()
+end
+
+function TurretManager:ExecuteAction()
+	if self.CurrentState == "Scanning" then 
+		if self.ShootingConnection then 
+			self.ShootingConnection:Disconnect()
+		end
+		
+		self.ScanningConnection = RunService.Heartbeat:Connect(function()
+			local players = Players:GetPlayers() 
+			local closestPlayer 
+			local MAXDIST = self.Range 
+			
+			for _, player in ipairs(players) do
+				local character = player.Character
+				
+				if character then 
+					local distance = (character.HumanoidRootPart.Position - self.Model.PrimaryPart.Position).Magnitude
+					if distance <= MAXDIST then 
+						MAXDIST = distance 
+						closestPlayer = player 
+					end
+				end
+			end
+			
+			if closestPlayer then 
+				self.TargetPlayer = closestPlayer
+				self:SetState("Shooting")
+			end
+		end)
+		
+	elseif self.CurrentState == "Shooting" then 
+		-- Check if target player exists 
+		task.spawn(function()
+			if not self.TargetPlayer then 
+				self:SetState("Scanning", true)
+				return 
+			end
+
+			local character = self.TargetPlayer.Character
+			if not character then 
+				self:SetState("Scanning", true)
+				return 
+			end
+
+			local distance = (character.HumanoidRootPart.Position - self.Model.PrimaryPart.Position).Magnitude
+			if distance > self.Range then 
+				self:SetState("Scanning", true)
+				return 
+			end
+
+			if self.ScanningConnection then 
+				self.ScanningConnection:Disconnect()
+			end 
+			
+			local part = Instance.new("Part")
+			part.Size = Vector3.new(1,1,1)
+			part.CanCollide = false 
+			part.Anchored = true
+			part.CFrame = self.Model.PrimaryPart.CFrame
+			
+			local direction = (character.HumanoidRootPart.Position - self.Model.PrimaryPart.Position).Unit
+			part.Parent = workspace
+			
+			local overlapParams = OverlapParams.new()
+			overlapParams.FilterType = Enum.RaycastFilterType.Exclude
+			overlapParams.FilterDescendantsInstances = {self.Model}
+			
+			self.ShootingConnection = RunService.Heartbeat:Connect(function(deltaTime)
+				if not character or not character:FindFirstChild("HumanoidRootPart") then 
+					self:SetState("Scanning", true)
+					return 
+				end
+
+				local movementThisFrame = direction * self.Speed * deltaTime
+				local newPosition = part.Position + movementThisFrame
+				part.CFrame = CFrame.lookAt(newPosition, newPosition + direction)
+				
+				local result = workspace:GetPartsInPart(part, overlapParams)
+				
+				for _, hitPart in ipairs(result) do 
+					if hitPart.Parent:FindFirstChild("Humanoid") then  
+						-- Hit player
+						local humanoid = hitPart.Parent:FindFirstChild("Humanoid")
+						humanoid:TakeDamage(self.Damage)
+						self.ShootingConnection:Disconnect()
+						part:Destroy()
+						break 
+					end
+				end
+			end)
+			
+			task.delay(3, function()
+				if self.ShootingConnection then 
+					self.ShootingConnection:Disconnect()
+				end
+				part:Destroy()
+			end)
+			
+			task.wait(self.Cooldown)
+			
+			if self.CurrentState == "Shooting" then
+				self:ExecuteAction()
+			end
+		end)
+		
+	elseif self.CurrentState == "Stunned" then 
+		print("Turret is stunned! Cannot act.")
+		
+		if self.ScanningConnection then 
+			self.ScanningConnection:Disconnect()
+		end
+		
+		if self.ShootingConnection then 
+			self.ShootingConnection:Disconnect()
+		end
+	end
+end
+
+function TurretManager:Stun(duration)
+	self:SetState("Stunned")
+	
+	task.delay(duration, function()
+		self:SetState("Scanning", true)
+	end)
+end
+
+
+return TurretManager
