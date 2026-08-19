@@ -25,8 +25,6 @@ local ExterminatorPingEvent = RemoteEvents:WaitForChild("ExterminatorPingEvent")
 local TARGET_TIME = 58 -- Exact amount of seconds the repair will take
 local TICK_RATE = 0.1     
 local REPAIR_AMOUNT = (100 / TARGET_TIME) * TICK_RATE 
-local MAX_DISTANCE = 15   
-local MAX_PROGRESS = 100
 
 -- STATE TRACKING --
 local activeRepairers = {} -- Format: [Player] = TargetGenerator
