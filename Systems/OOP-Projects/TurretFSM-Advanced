@@ -1,4 +1,4 @@
--- This is a further developed Turret FSM System, involving projectiles, collision detection, spacial querying and vector maths.
+-- This is a further developed Turret FSM System, involving projectiles, collision detection, spatial querying and vector maths.
 
 -- SERVICES -- 
 local RunService = game:GetService("RunService")
