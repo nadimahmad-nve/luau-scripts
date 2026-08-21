@@ -1,7 +1,6 @@
 -- This BlinkModule creates an object to deal with the visuals and mathematics behind the blink ability. 
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
+--local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local AbilityFramework = require((script.Parent :: any).AbilityFramework)
 
 local Blink = setmetatable({}, AbilityFramework)

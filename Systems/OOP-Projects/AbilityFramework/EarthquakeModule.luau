@@ -1,7 +1,7 @@
 -- This EarthquakeModule creates an object to deal with the visuals and mathematics behind the earthquake ability. 
 -- We use Client-Side Prediction
 
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local AbilityFramework = require((script.Parent :: any).AbilityFramework)
 
 local Earthquake = setmetatable({}, AbilityFramework)
