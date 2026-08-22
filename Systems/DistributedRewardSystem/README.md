@@ -1,13 +1,13 @@
 # Distributed Global Event & Monetization Backend
 
-A highly scalable, production-ready backend system built for Roblox (Luau). This system handles cross-server synchronization for a timed global event, robust offline player data queueing, and a completely secure, server-validated monetization pipeline. 
+A highly scalable, production-ready backend system built for Roblox (Luau). This system handles cross-server synchronisation for a timed global event, robust offline player data queueing, and a completely secure, server-validated monetisation pipeline. 
 
-Designed as the core backend architecture for *Wrenches & Souls*, this project demonstrates advanced handling of distributed systems constraints, memory management, and cache coherence within the Roblox engine.
+This project demonstrates advanced handling of distributed systems constraints, memory management, and cache coherence within the Roblox engine.
 
 ## Core Features & Technical Implementation
 
-### 1. Cross-Server Synchronization & Batching
-*   Utilizes **MemoryStoreService** (`SortedMap`) to maintain a single, synchronized global leaderboard across all live servers.
+### 1. Cross-Server Synchronisation & Batching
+*   Utilises **MemoryStoreService** (`SortedMap`) to maintain a single, synchronised global leaderboard across all live servers.
 *   Implements an asynchronous 10-second batching loop to aggregate player contribution points in memory before pushing to the cloud, strictly adhering to API rate limits while ensuring zero data loss.
 
 ### 2. Distributed Mutex Lock (Exactly-Once Delivery)
