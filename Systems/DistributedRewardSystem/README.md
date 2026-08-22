@@ -1,4 +1,4 @@
-# Distributed Global Event & Monetization Backend
+# Distributed Global Event & Monetisation Backend
 
 A highly scalable, production-ready backend system built for Roblox (Luau). This system handles cross-server synchronisation for a timed global event, robust offline player data queueing, and a completely secure, server-validated monetisation pipeline. 
 
