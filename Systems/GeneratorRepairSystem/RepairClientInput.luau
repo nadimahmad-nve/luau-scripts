@@ -160,7 +160,7 @@ local function qteCheck()
 
 		-- THE VALIDATION MATH
 		if currentNeedleAngle >= zoneStart and currentNeedleAngle <= zoneEnd then
-			print("Skillcheck Nailed!")
+			print("Skillcheck success!")
 		else
 			print("Skillcheck Failed! Overloading...")
 			QTEFailedEvent:FireServer(activeGenerator)
@@ -264,14 +264,14 @@ local function handleInteraction(actionName, inputState, inputObject)
 					isQTEActive = true 
 					radialContainer.Visible = true
 
-					-- 1. Setup the Random Success Zone
+					-- Setup the Random Success Zone
 					local zoneSize = 45 -- 45 degrees wide
 					zoneStart = math.random(80, 270)
 					zoneEnd = zoneStart + zoneSize
 
 					successZone.Rotation = zoneStart 
 
-					-- 2. Reset and Spin the Needle
+					-- Reset and Spin the Needle
 					currentNeedleAngle = 0
 					needle.Rotation = 0
 
@@ -281,7 +281,7 @@ local function handleInteraction(actionName, inputState, inputObject)
 						currentNeedleAngle = currentNeedleAngle + (SPIN_SPEED * deltaTime)
 						needle.Rotation = currentNeedleAngle
 
-						-- 3. Timeout Failure
+						-- Timeout Failure
 						if currentNeedleAngle >= 360 then
 							isQTEActive = false
 							spinConnection:Disconnect()
@@ -301,7 +301,7 @@ local function handleInteraction(actionName, inputState, inputObject)
 						end
 					end)
 
-					-- 4. Yield the while loop until the player succeeds or fails
+					-- Yield the while loop until the player succeeds or fails
 					repeat task.wait(0.1) until isQTEActive == false
 				end
 
