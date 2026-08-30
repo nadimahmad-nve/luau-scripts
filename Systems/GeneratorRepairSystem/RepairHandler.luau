@@ -133,12 +133,11 @@ RepairEvent.OnServerEvent:Connect(function(player, action, targetSlot, targetGen
 		task.spawn(function()
 			while player:GetAttribute("IsRepairing") == true do
 
-				-- A. VALIDATION
 				if not character or not character.Parent or not targetGenerator.Parent then
 					break
 				end
 
-				-- B. OVERLAP CHECK
+				-- OVERLAP CHECK
 				local overlapParams = OverlapParams.new()
 				overlapParams.FilterDescendantsInstances = {character}
 				overlapParams.FilterType = Enum.RaycastFilterType.Include
@@ -148,7 +147,6 @@ RepairEvent.OnServerEvent:Connect(function(player, action, targetSlot, targetGen
 					break 
 				end
 
-				-- C. ADD PROGRESS
 				local currentProgress = targetGenerator:GetAttribute("Progress") or 0
 				updateVisuals(player, targetGenerator)
 
